@@ -1,5 +1,4 @@
-﻿
-using Booking.DataAccess;
+﻿using Booking.DataAccess;
 using Booking.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 

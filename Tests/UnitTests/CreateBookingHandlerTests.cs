@@ -21,7 +21,7 @@ namespace UnitTests
         }
 
 		[Fact]
-		public void Test1()
+		public void Execute_ValidBooking_AddsBookingToTable()
 		{
 			var bookedTable = fixture.Create<Table>();
 			var booking = fixture.Build<Booking.DataAccess.Models.Booking>().With(b => b.CompanyId, bookedTable.CompanyId).Create();
