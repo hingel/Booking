@@ -13,7 +13,6 @@ env:
 
 jobs:
   build-and-test:
-
     name: build-and-test
     runs-on: ubuntu-latest
     # strategy:
@@ -26,7 +25,7 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-        cache: true
+        # cache: true
 
     - name: Install dependencies
       run: dotnet restore
