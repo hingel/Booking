@@ -24,8 +24,6 @@ namespace UnitTests
 		public void Execute_ValidBooking_AddsBookingToTable()
 		{
 			var bookedTable = fixture.Create<Table>();
-			var booking = fixture.Build<Booking.DataAccess.Models.Booking>().With(b => b.CompanyId, bookedTable.CompanyId).Create();
-			bookedTable.Bookings.Add(booking);
 
 			repository.Tables(bookedTable.CompanyId).Returns([bookedTable]);
 
@@ -34,6 +32,26 @@ namespace UnitTests
 			var response = subject.Execute(request);
 
 			repository.Received(1).SaveChanges();
+		}
+
+		[Fact]
+		public void Execute_InValidBooking_Returns()
+		{
+			var bookedTable = fixture.Create<Table>();
+			var booking = fixture.Build<Booking.DataAccess.Models.Booking>().With(b => b.CompanyId, bookedTable.CompanyId).Create();
+			bookedTable.Bookings.Add(booking);
+
+			repository.Tables(bookedTable.CompanyId).Returns([bookedTable]);
+
+			var request = fixture.Build<CreateBooking>()
+				.With(b => b.CompanyId, bookedTable.CompanyId)
+				.With(b => b.DateTime, booking.DateTime)
+				.With(b => b.Duration, booking.Duration)
+				.Create();
+
+			var response = subject.Execute(request);
+
+			repository.Received(0).SaveChanges();
 		}
 	}
 }
