@@ -29,7 +29,7 @@ namespace UnitTests
 
 			var request = fixture.Build<CreateBooking>().With(b => b.CompanyId, bookedTable.CompanyId).Create();
 
-			var response = subject.Execute(request);
+			var response = subject.Handle(request, CancellationToken.None);
 
 			repository.Received(1).SaveChanges();
 		}
@@ -49,7 +49,7 @@ namespace UnitTests
 				.With(b => b.Duration, booking.Duration)
 				.Create();
 
-			var response = subject.Execute(request);
+			var response = subject.Handle(request, CancellationToken.None);
 
 			repository.Received(0).SaveChanges();
 		}
