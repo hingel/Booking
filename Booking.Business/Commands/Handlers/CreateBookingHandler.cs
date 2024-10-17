@@ -10,14 +10,12 @@ public class CreateBookingHandler(IRepository tableRepository) : IRequestHandler
 {
 	public async Task<string> Handle(CreateBooking request, CancellationToken cancellationToken)
 	{
-		//var availableTables = (await tableRepository.Tables(request.CompanyId))
-		//.Where(t => !t.Bookings.Any(b =>
-		//request.DateTime.Year == b.DateTime.Year &&
-		//request.DateTime.DayOfYear == b.DateTime.DayOfYear &&
-		//request.DateTime.Hour + request.Duration > b.DateTime.Hour &&
-		//request.DateTime.Hour < b.DateTime.Hour + b.Duration));
-
-		var availableTables = Array.Empty<Table>();
+		var availableTables = (await tableRepository.Tables(request.CompanyId))
+		.Where(t => !t.Bookings.Any(b =>
+		request.DateTime.Year == b.DateTime.Year &&
+		request.DateTime.DayOfYear == b.DateTime.DayOfYear &&
+		request.DateTime.Hour + request.Duration > b.DateTime.Hour &&
+		request.DateTime.Hour < b.DateTime.Hour + b.Duration));
 
 		if (!availableTables.Any()) return "Booking not added";
 
