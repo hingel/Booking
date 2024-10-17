@@ -28,6 +28,6 @@ app.MapPost("/", async (IMediator mediator, CreateBookingRequest booking) =>
 	Guid.Parse(booking.TableId),
 	Guid.Parse(booking.CompanyId)))));
 
-app.MapPost("table/", () => "Table");
+app.MapPost("tables/", () => "Table");
 
 app.Run();
