@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Booking.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241003144348_Init")]
+    [Migration("20241018144930_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Booking.DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -59,8 +59,8 @@ namespace Booking.DataAccess.Migrations
                                 .HasColumnType("datetimeoffset");
 
                             b1.Property<decimal>("Duration")
-                                .HasPrecision(2, 1)
-                                .HasColumnType("decimal(2,1)");
+                                .HasPrecision(3, 1)
+                                .HasColumnType("decimal(3,1)");
 
                             b1.Property<int>("NoOfPersons")
                                 .HasColumnType("int");
@@ -72,9 +72,9 @@ namespace Booking.DataAccess.Migrations
 
                             b1.HasIndex("TableId");
 
-                            b1.ToTable("Bookings");
+                            b1.ToTable("Booking");
 
-                            b1.WithOwner("Table")
+                            b1.WithOwner()
                                 .HasForeignKey("TableId");
 
                             b1.OwnsOne("Booking.DataAccess.Models.Contact", "Contact", b2 =>
@@ -99,7 +99,7 @@ namespace Booking.DataAccess.Migrations
 
                                     b2.HasKey("BookingId");
 
-                                    b2.ToTable("Bookings");
+                                    b2.ToTable("Booking");
 
                                     b2.WithOwner()
                                         .HasForeignKey("BookingId");
@@ -107,8 +107,6 @@ namespace Booking.DataAccess.Migrations
 
                             b1.Navigation("Contact")
                                 .IsRequired();
-
-                            b1.Navigation("Table");
                         });
 
                     b.Navigation("Bookings");

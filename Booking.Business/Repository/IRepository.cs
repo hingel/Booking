@@ -1,8 +1,11 @@
-﻿using Booking.DataAccess.Models;
+﻿using Booking.Business.Commands.Handlers;
+using Booking.DataAccess.Models;
 
 namespace Booking.Business.Repository;
 public interface IRepository
 {
-	Task<Table[]> Tables(Guid CompanyId);
+	Task<IEnumerable<Table>> GetAllTables(Guid CompanyId);
 	Task SaveChanges();
+	Task AddTable(Table table);
+	Task<Table[]> GetAvailableTables(CreateBooking request);
 }
