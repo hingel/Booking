@@ -6,6 +6,6 @@ public interface IRepository
 {
 	Task<IEnumerable<Table>> GetAllTables(Guid CompanyId);
 	Task SaveChanges();
-	Task AddTable(Table table);
+	Task<Guid> AddTable(Table table);
 	Task<Table[]> GetAvailableTables(CreateBooking request);
 }

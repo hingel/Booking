@@ -14,10 +14,8 @@ public class CreateTableHandler(IRepository tableRepository) : IRequestHandler<C
 			return new Result<Guid>(false, "Table already exists", Guid.Empty);
 		}
 
-		//TODO: Gör så att ID't kommer ifrån databasen och returnera det.
-		var tableId = Guid.NewGuid();
-		await tableRepository.AddTable(new DataAccess.Models.Table(request.Name, request.CompanyId));
+		var addedTableId = await tableRepository.AddTable(new DataAccess.Models.Table(request.Name, request.CompanyId));
 
-		return new Result<Guid>(true, $"Table with name {request.Name} added", tableId); 
+		return new Result<Guid>(true, $"Table with name {request.Name} added", addedTableId); 
 	}
 }

@@ -1,58 +1,50 @@
-//using AutoFixture;
-//using Booking.Business.Commands.Handlers;
-//using Booking.Business.Repository;
-//using Booking.DataAccess.Models;
-//using NSubstitute;
+using AutoFixture;
+using Booking.Business.Commands.Handlers;
+using Booking.Business.Repository;
+using Booking.DataAccess.Models;
+using NSubstitute;
 
-//namespace UnitTests
-//{
-//	public class CreateBookingHandlerTests
-//	{
-//		private Fixture fixture;
-//		private readonly IRepository repository;
-//		private readonly CreateBookingHandler subject;
+namespace UnitTests
+{
+	public class CreateBookingHandlerTests : UnitTests
+	{
+		private readonly IRepository repository;
+		private readonly CreateBookingHandler subject;
 
-//		public CreateBookingHandlerTests()
-//        {
-//			fixture = new Fixture();
+		public CreateBookingHandlerTests()
+		{
+			repository = Substitute.For<IRepository>();
+			subject = new CreateBookingHandler(repository);
+		}
 
-//			repository = Substitute.For<IRepository>();
-//			ContextBoundObject 
-//			subject = new CreateBookingHandler(repository);
-//        }
+		[Fact]
+		public async Task Handle_ValidBooking_AddsBookingToTable()
+		{
+			var bookableTable = Fixture.Create<Table>();
+			var bookingRequest = Fixture.Build<CreateBooking>().With(c => c.CompanyId, bookableTable.CompanyId).Create();
 
-//		[Fact]
-//		public void Execute_ValidBooking_AddsBookingToTable()
-//		{
-//			var bookedTable = fixture.Create<Table>();
+			repository.GetAvailableTables(bookingRequest).Returns([bookableTable]);
 
-//			repository.Tables(bookedTable.CompanyId).Returns([bookedTable]);
+			var response = subject.Handle(bookingRequest, CancellationToken.None);
 
-//			var request = fixture.Build<CreateBooking>().With(b => b.CompanyId, bookedTable.CompanyId).Create();
+			await repository.Received(1).SaveChanges();
+		}
 
-//			var response = subject.Handle(request, CancellationToken.None);
+		[Fact]
+		public async Task Handle_InValidBooking_Returns()
+		{
+			var bookedTable = Fixture.Create<Table>();
+			var booking = Fixture.Build<Booking.DataAccess.Models.Booking>().With(b => b.CompanyId, bookedTable.CompanyId).Create();
+			bookedTable.Bookings.Add(booking);
 
-//			repository.Received(1).SaveChanges();
-//		}
+			var request = Fixture.Build<CreateBooking>()
+				.With(b => b.CompanyId, bookedTable.CompanyId)
+				.With(b => b.DateTime, booking.DateTime)
+				.With(b => b.Duration, booking.Duration)
+				.Create();
 
-//		[Fact]
-//		public void Execute_InValidBooking_Returns()
-//		{
-//			var bookedTable = fixture.Create<Table>();
-//			var booking = fixture.Build<Booking.DataAccess.Models.Booking>().With(b => b.CompanyId, bookedTable.CompanyId).Create();
-//			bookedTable.Bookings.Add(booking);
-
-//			repository.Tables(bookedTable.CompanyId).Returns([bookedTable]);
-
-//			var request = fixture.Build<CreateBooking>()
-//				.With(b => b.CompanyId, bookedTable.CompanyId)
-//				.With(b => b.DateTime, booking.DateTime)
-//				.With(b => b.Duration, booking.Duration)
-//				.Create();
-
-//			var response = subject.Handle(request, CancellationToken.None);
-
-//			repository.Received(0).SaveChanges();
-//		}
-//	}
-//}
+			var response = subject.Handle(request, CancellationToken.None);
+			await repository.Received(0).SaveChanges();
+		}
+	}
+}

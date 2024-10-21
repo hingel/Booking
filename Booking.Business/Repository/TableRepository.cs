@@ -11,10 +11,11 @@ public class TableRepository(ApplicationDbContext dbContext) : IRepository
 
 	public async Task SaveChanges() => await dbContext.SaveChangesAsync();
 
-	public async Task AddTable(Table table)
+	public async Task<Guid> AddTable(Table table)
 	{
 		dbContext.Tables.Add(table);
 		await dbContext.SaveChangesAsync();
+		return table.Id;
 	}
 
 	public async Task<Table[]> GetAvailableTables(CreateBooking request)
