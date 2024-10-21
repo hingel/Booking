@@ -34,16 +34,17 @@ namespace UnitTests
 		public async Task Handle_InValidBooking_Returns()
 		{
 			var bookedTable = Fixture.Create<Table>();
-			var booking = Fixture.Build<Booking.DataAccess.Models.Booking>().With(b => b.CompanyId, bookedTable.CompanyId).Create();
+			var booking = Fixture.Build<Booking.DataAccess.Models.Booking>()
+				.With(b => b.CompanyId, bookedTable.CompanyId)
+				.Create();
 			bookedTable.Bookings.Add(booking);
 
-			var request = Fixture.Build<CreateBooking>()
-				.With(b => b.CompanyId, bookedTable.CompanyId)
-				.With(b => b.DateTime, booking.DateTime)
-				.With(b => b.Duration, booking.Duration)
+			var bookingRequest = Fixture.Build<CreateBooking>()
+				.With(c => c.DateTime, booking.DateTime)
+				.With(c => c.CompanyId, bookedTable.CompanyId)
 				.Create();
 
-			var response = subject.Handle(request, CancellationToken.None);
+			var response = subject.Handle(bookingRequest, CancellationToken.None);
 			await repository.Received(0).SaveChanges();
 		}
 	}

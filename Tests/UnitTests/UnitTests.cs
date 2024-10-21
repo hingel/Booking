@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using Booking.Business.Commands.Handlers;
 using Booking.Business.Repository;
+using UnitTests.SpecimenBuilder;
 
 namespace UnitTests;
 public class UnitTests
@@ -12,6 +13,7 @@ public class UnitTests
 	public UnitTests()
 	{
 		Fixture = new Fixture();
+		Fixture.Customizations.Add(new DateSpecimenBuilder());
 	}
 }
 

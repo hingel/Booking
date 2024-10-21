@@ -1,10 +1,11 @@
 ﻿using Booking.Business.Repository;
 using Booking.DataAccess.Models;
 using MediatR;
+using NodaTime;
 
 namespace Booking.Business.Commands.Handlers;
 
-public record CreateBooking(Guid Id, DateTimeOffset DateTime, int Duration, int Persons, Contact Contact, Guid CompanyId) : IRequest<Result<string>>;
+public record CreateBooking(Guid Id, LocalDateTime DateTime, int Duration, int Persons, Contact Contact, Guid CompanyId) : IRequest<Result<string>>;
 
 public class CreateBookingHandler(IRepository tableRepository) : IRequestHandler<CreateBooking, Result<string>>
 {
@@ -18,8 +19,11 @@ public class CreateBookingHandler(IRepository tableRepository) : IRequestHandler
 			request.DateTime,
 			request.Duration,
 			request.Persons,
-			request.CompanyId,
-			request.Contact);
+			request.CompanyId
+			)
+		{
+			Contact = request.Contact
+		};
 
 		availableTables.First().Bookings.Add(bookingToAdd);
 

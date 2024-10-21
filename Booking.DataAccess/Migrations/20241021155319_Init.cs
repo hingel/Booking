@@ -15,9 +15,9 @@ namespace Booking.DataAccess.Migrations
                 name: "Tables",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    CompanyId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,15 +28,15 @@ namespace Booking.DataAccess.Migrations
                 name: "Booking",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DateTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    Duration = table.Column<decimal>(type: "decimal(3,1)", precision: 3, scale: 1, nullable: false),
-                    NoOfPersons = table.Column<int>(type: "int", nullable: false),
-                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Contact_Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Contact_PhoneNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Contact_Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    TableId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    DateTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    Duration = table.Column<decimal>(type: "numeric(3,1)", precision: 3, scale: 1, nullable: false),
+                    NoOfPersons = table.Column<int>(type: "integer", nullable: false),
+                    CompanyId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Contact_Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Contact_PhoneNumber = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Contact_Email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    TableId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {

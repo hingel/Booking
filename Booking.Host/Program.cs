@@ -7,9 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("LocalConnectionString") ?? throw new Exception("Connectionstring not found");
+//var connectionString = builder.Configuration.GetConnectionString("LocalConnectionString") ?? throw new Exception("Connectionstring not found");
+var connectionString = "Host=localhost;Username=postgres;Password=FromSecret;Database=testDb"; 
 
-builder.Services.AddDbContext<Booking.DataAccess.ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<Booking.DataAccess.ApplicationDbContext>(options => options.UseNpgsql(connectionString, o => o.UseNodaTime()));
 builder.Services.AddScoped<IRepository, TableRepository>();
 builder.Services.AddMediatR(cfg => 	cfg.RegisterServicesFromAssemblies(typeof(TableRepository).Assembly));
 
@@ -19,24 +20,13 @@ app.MapGet("/", () => "Hello World!");
 
 app.MapPost("/", async (IMediator mediator, CreateBookingRequest booking) =>
 	Results.Ok(await mediator.Send(new CreateBooking(Guid.NewGuid(),
-	booking.DateTime,
+	new NodaTime.LocalDateTime(booking.DateTime.Year, booking.DateTime.Month, booking.DateTime.Day, booking.DateTime.Hour, booking.DateTime.Minute, booking.DateTime.Second),
 	booking.Duration,
 	booking.Persons,
 	new Contact(booking.Contact.Name,
 	booking.Contact.PhoneNumber,
 	booking.Contact.Email),
 	Guid.Parse(booking.CompanyId)))));
-	//.AddEndpointFilter(async (invocationContext, next) =>
-	//{
-	//	invocationContext.HttpContext.Request.Headers.TryGetValue("CompanyId", out var companyIdString);
-
-	//	if (string.IsNullOrEmpty(companyIdString)) return Results.Problem("No company id");
-
-	//	var companyId = Guid.Parse(companyIdString!);
-	//	//TODO, kan lägga till detta i en klass för att använda som queryparameter
-
-	//	return await next(invocationContext);
-	//});
 
 app.MapPost("tables", async (IMediator mediator, CreateTableRequest table) =>
 {

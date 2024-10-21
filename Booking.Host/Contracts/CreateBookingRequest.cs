@@ -1,4 +1,6 @@
-﻿namespace Booking.Host.Contracts
+﻿using NodaTime;
+
+namespace Booking.Host.Contracts
 {
 	public record CreateBookingRequest(DateTimeOffset DateTime, int Duration, int Persons, ContactContract Contact, string TableId, string CompanyId);
 
