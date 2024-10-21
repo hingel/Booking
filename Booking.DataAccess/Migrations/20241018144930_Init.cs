@@ -16,8 +16,8 @@ namespace Booking.DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -25,12 +25,12 @@ namespace Booking.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bookings",
+                name: "Booking",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DateTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    Duration = table.Column<decimal>(type: "decimal(2,1)", precision: 2, scale: 1, nullable: false),
+                    Duration = table.Column<decimal>(type: "decimal(3,1)", precision: 3, scale: 1, nullable: false),
                     NoOfPersons = table.Column<int>(type: "int", nullable: false),
                     CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Contact_Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -40,9 +40,9 @@ namespace Booking.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bookings", x => x.Id);
+                    table.PrimaryKey("PK_Booking", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bookings_Tables_TableId",
+                        name: "FK_Booking_Tables_TableId",
                         column: x => x.TableId,
                         principalTable: "Tables",
                         principalColumn: "Id",
@@ -50,8 +50,8 @@ namespace Booking.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_TableId",
-                table: "Bookings",
+                name: "IX_Booking_TableId",
+                table: "Booking",
                 column: "TableId");
         }
 
@@ -59,7 +59,7 @@ namespace Booking.DataAccess.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Bookings");
+                name: "Booking");
 
             migrationBuilder.DropTable(
                 name: "Tables");

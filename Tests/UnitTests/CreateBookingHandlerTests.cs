@@ -6,52 +6,45 @@ using NSubstitute;
 
 namespace UnitTests
 {
-	public class CreateBookingHandlerTests
+	public class CreateBookingHandlerTests : UnitTests
 	{
-		private Fixture fixture;
 		private readonly IRepository repository;
 		private readonly CreateBookingHandler subject;
 
 		public CreateBookingHandlerTests()
-        {
-			fixture = new Fixture();
-
+		{
 			repository = Substitute.For<IRepository>();
 			subject = new CreateBookingHandler(repository);
-        }
-
-		[Fact]
-		public void Execute_ValidBooking_AddsBookingToTable()
-		{
-			var bookedTable = fixture.Create<Table>();
-
-			repository.Tables(bookedTable.CompanyId).Returns([bookedTable]);
-
-			var request = fixture.Build<CreateBooking>().With(b => b.CompanyId, bookedTable.CompanyId).Create();
-
-			var response = subject.Handle(request, CancellationToken.None);
-
-			repository.Received(1).SaveChanges();
 		}
 
 		[Fact]
-		public void Execute_InValidBooking_Returns()
+		public async Task Handle_ValidBooking_AddsBookingToTable()
 		{
-			var bookedTable = fixture.Create<Table>();
-			var booking = fixture.Build<Booking.DataAccess.Models.Booking>().With(b => b.CompanyId, bookedTable.CompanyId).Create();
+			var bookableTable = Fixture.Create<Table>();
+			var bookingRequest = Fixture.Build<CreateBooking>().With(c => c.CompanyId, bookableTable.CompanyId).Create();
+
+			repository.GetAvailableTables(bookingRequest).Returns([bookableTable]);
+
+			var response = subject.Handle(bookingRequest, CancellationToken.None);
+
+			await repository.Received(1).SaveChanges();
+		}
+
+		[Fact]
+		public async Task Handle_InValidBooking_Returns()
+		{
+			var bookedTable = Fixture.Create<Table>();
+			var booking = Fixture.Build<Booking.DataAccess.Models.Booking>().With(b => b.CompanyId, bookedTable.CompanyId).Create();
 			bookedTable.Bookings.Add(booking);
 
-			repository.Tables(bookedTable.CompanyId).Returns([bookedTable]);
-
-			var request = fixture.Build<CreateBooking>()
+			var request = Fixture.Build<CreateBooking>()
 				.With(b => b.CompanyId, bookedTable.CompanyId)
 				.With(b => b.DateTime, booking.DateTime)
 				.With(b => b.Duration, booking.Duration)
 				.Create();
 
 			var response = subject.Handle(request, CancellationToken.None);
-
-			repository.Received(0).SaveChanges();
+			await repository.Received(0).SaveChanges();
 		}
 	}
 }

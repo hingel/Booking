@@ -25,9 +25,23 @@ app.MapPost("/", async (IMediator mediator, CreateBookingRequest booking) =>
 	new Contact(booking.Contact.Name,
 	booking.Contact.PhoneNumber,
 	booking.Contact.Email),
-	Guid.Parse(booking.TableId),
 	Guid.Parse(booking.CompanyId)))));
+	//.AddEndpointFilter(async (invocationContext, next) =>
+	//{
+	//	invocationContext.HttpContext.Request.Headers.TryGetValue("CompanyId", out var companyIdString);
 
-app.MapPost("tables/", () => "Table");
+	//	if (string.IsNullOrEmpty(companyIdString)) return Results.Problem("No company id");
+
+	//	var companyId = Guid.Parse(companyIdString!);
+	//	//TODO, kan lägga till detta i en klass för att använda som queryparameter
+
+	//	return await next(invocationContext);
+	//});
+
+app.MapPost("tables", async (IMediator mediator, CreateTableRequest table) =>
+{
+	var result = await mediator.Send(new CreateTable(table.Name, Guid.Parse(table.CompanyId)));
+	return result.Success ? Results.Ok(result) : Results.Conflict(result); 
+});
 
 app.Run();
