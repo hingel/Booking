@@ -28,32 +28,17 @@ jobs:
                 username: ${{ secrets.DOCKERUSERNAME }}
                 password: ${{ secrets.DOCKERTOKEN }}
 
-            # - name: Extract metadata (tags, labels) for Docker
-            #   id: meta
-            #   uses: docker/metadata-action@v5
-            #   with:
-            #     images: hingel/bookingrepo
+            - name: Extract metadata (tags, labels) for Docker
+              id: meta
+              uses: docker/metadata-action@v5
+              with:
+                images: hingel/bookingrepo
             
-            # Här ifrån...
-            - name: Install dependencies
-              run: dotnet restore
-      
-            - name: Build 
-              run: dotnet build --configuration Release --no-restore
-
-            - name: Build Docker image
-              run: docker buildx build --platform linux/arm64/v8 . -t hingel/bookingrepo -f Dockerfile
-            
-            - name: Push image to hub
-              run: docker push hingel/bookingrepo
-            #... och hit är för test
-
-
-            #- name: Build and push Docker image
-            #   id: push
-            #   uses: docker/build-push-action@v5
-            #   with:
-            #     context: .
-            #     push: true
-            #     tags: ${{ steps.meta.outputs.tags }}
-            #     labels: ${{ steps.meta.outputs.labels }}
+            - name: Build and push Docker image
+              id: push
+              uses: docker/build-push-action@v5
+              with:
+                context: .
+                push: true
+                tags: ${{ steps.meta.outputs.tags }}
+                labels: ${{ steps.meta.outputs.labels }}
