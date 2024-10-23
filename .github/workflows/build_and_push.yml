@@ -2,12 +2,12 @@ name: Publish Docker image
 
 on: 
     push:
-        #branches: [main]
-    pull_request:
-        branches: [ development ]
-        paths:
-        - '**.cs'
-        - '**.csproj'
+        branches: []
+    # pull_request:
+    #     branches: [ development ]
+    #     paths:
+    #     - '**.cs'
+    #     - '**.csproj'
 
 jobs:
     push_to_registry:

@@ -11,10 +11,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0-noble-arm64v8 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Booking.Host/Booking.Host.csproj", "Booking.Host/"]
-COPY ["Booking.Business/Booking.Business.csproj", "Booking.Business/"]
-COPY ["Booking.DataAccess/Booking.DataAccess.csproj", "Booking.DataAccess/"]
-RUN dotnet restore "./Booking.Host/Booking.Host.csproj" -r linux-arm64
+# COPY ["Booking.Host/Booking.Host.csproj", "Booking.Host/"]
+# COPY ["Booking.Business/Booking.Business.csproj", "Booking.Business/"]
+# COPY ["Booking.DataAccess/Booking.DataAccess.csproj", "Booking.DataAccess/"]
+# RUN dotnet restore "./Booking.Host/Booking.Host.csproj" -r linux-arm64
 COPY . .
 WORKDIR "/src/Booking.Host"
 RUN dotnet build "./Booking.Host.csproj" -c $BUILD_CONFIGURATION -o /app/build
