@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using NodaTime;
 
 #nullable disable
 
@@ -29,7 +30,7 @@ namespace Booking.DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    DateTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    DateTime = table.Column<LocalDateTime>(type: "timestamp without time zone", nullable: false),
                     Duration = table.Column<decimal>(type: "numeric(3,1)", precision: 3, scale: 1, nullable: false),
                     NoOfPersons = table.Column<int>(type: "integer", nullable: false),
                     CompanyId = table.Column<Guid>(type: "uuid", nullable: false),
