@@ -12,7 +12,7 @@ var connectionString = builder.Configuration.GetConnectionString("LocalConnectio
 
 var stringBuilder = new NpgsqlConnectionStringBuilder(connectionString)
 {
-	Password = builder.Configuration["PostgreSQL:Password"]
+	//Password = builder.Configuration["PostgreSQL:Password"]
 };
 
 builder.Services.AddDbContext<Booking.DataAccess.ApplicationDbContext>(options => options.UseNpgsql(stringBuilder.ConnectionString, o => o.UseNodaTime()));
