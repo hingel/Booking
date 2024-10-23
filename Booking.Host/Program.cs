@@ -10,14 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("LocalConnectionString") ?? throw new Exception("Connectionstring not found");
 
-//var stringBuilder = new NpgsqlConnectionStringBuilder(connectionString)
-//{
-//	//Password = builder.Configuration["PostgreSQL:Password"]
-//};
+var stringBuilder = new NpgsqlConnectionStringBuilder(connectionString)
+{
+	Password = builder.Configuration["PostgreSQL:Password"]
+};
 
 builder.Services.AddDbContext<Booking.DataAccess.ApplicationDbContext>(options => options.UseNpgsql(
-	//stringBuilder.ConnectionString, 
-	connectionString, 
+	stringBuilder.ConnectionString, 
 	o => o.UseNodaTime()));
 builder.Services.AddScoped<IRepository, TableRepository>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(TableRepository).Assembly));
