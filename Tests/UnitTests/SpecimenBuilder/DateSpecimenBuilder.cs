@@ -13,6 +13,6 @@ public class DateSpecimenBuilder : ISpecimenBuilder
 		if (type != typeof(LocalDateTime)) return new NoSpecimen();
 
 		var rnd = new Random();
-		return new LocalDateTime(rnd.Next(2000, 2025), rnd.Next(1,13), rnd.Next(1, 28), rnd.Next(1,25), rnd.Next(1, 60), rnd.Next(1, 60));
+		return new LocalDateTime(rnd.Next(2000, 2025), rnd.Next(1,13), rnd.Next(1, 28), rnd.Next(1,24), rnd.Next(1, 60), rnd.Next(1, 60));
 	}
 }
