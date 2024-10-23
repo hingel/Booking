@@ -1,23 +1,30 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>fa7f9bf5-ce04-476a-af34-5c4f9b432229</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
 	<ItemGroup>
-	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
+	<PackageReference Include="MediatR" Version="12.4.1" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
 		<PrivateAssets>all</PrivateAssets>
 		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.6">
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
 		<PrivateAssets>all</PrivateAssets>
 		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
+	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+	<PackageReference Include="NodaTime" Version="3.2.0" />
+	<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime" Version="8.0.10" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Booking.Business\Booking.Business.csproj" />
 	  <ProjectReference Include="..\Booking.DataAccess\Booking.DataAccess.csproj" />
 	</ItemGroup>
 

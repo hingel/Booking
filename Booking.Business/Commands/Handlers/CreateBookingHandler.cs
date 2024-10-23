@@ -1,33 +1,34 @@
 ﻿using Booking.Business.Repository;
 using Booking.DataAccess.Models;
+using MediatR;
+using NodaTime;
 
 namespace Booking.Business.Commands.Handlers;
 
-public record CreateBooking(Guid Id, DateTimeOffset DateTime, int Duration, int Persons, Contact Contact, Guid TableId, Guid CompanyId);
+public record CreateBooking(Guid Id, LocalDateTime DateTime, int Duration, int Persons, Contact Contact, Guid CompanyId) : IRequest<Result<string>>;
 
-public class CreateBookingHandler(IRepository tableRepository)
+public class CreateBookingHandler(IRepository tableRepository) : IRequestHandler<CreateBooking, Result<string>>
 {
-	public async Task Execute(CreateBooking request)
+	public async Task<Result<string>> Handle(CreateBooking request, CancellationToken cancellationToken)
 	{
-		//Här vill man ju ha en direkt sökning mot databasen egentligen
-		var availableTables = (await tableRepository.Tables(request.CompanyId))
-			.Where(t => !t.Bookings.Any(b => 
-			request.DateTime.Year == b.DateTime.Year &&
-			request.DateTime.DayOfYear == b.DateTime.DayOfYear &&
-			request.DateTime.Hour + request.Duration > b.DateTime.Hour &&
-			request.DateTime.Hour < b.DateTime.Hour + b.Duration));
+		var availableTables = await tableRepository.GetAvailableTables(request);
 
-		if (!availableTables.Any()) return;
+		if (!availableTables.Any()) return new Result<string>(false, "Booking not added", null);
 
-		availableTables.First().Bookings.Add(
-			new DataAccess.Models.Booking(request.Id,
+		var bookingToAdd = new DataAccess.Models.Booking(
 			request.DateTime,
-			request.Duration, 
-			request.Persons, 
-			request.CompanyId, 
-			request.Contact));
+			request.Duration,
+			request.Persons,
+			request.CompanyId
+			)
+		{
+			Contact = request.Contact
+		};
+
+		availableTables.First().Bookings.Add(bookingToAdd);
 
 		await tableRepository.SaveChanges();
+		return new Result<string>(true, "Booking added", bookingToAdd.Id.ToString());
 	}
 }
 

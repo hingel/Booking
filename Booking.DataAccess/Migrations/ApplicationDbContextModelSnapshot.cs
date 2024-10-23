@@ -3,8 +3,9 @@ using System;
 using Booking.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NodaTime;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -17,24 +18,24 @@ namespace Booking.DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Booking.DataAccess.Models.Table", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("Id");
 
@@ -47,56 +48,56 @@ namespace Booking.DataAccess.Migrations
                         {
                             b1.Property<Guid>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<Guid>("CompanyId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
-                            b1.Property<DateTimeOffset>("DateTime")
-                                .HasColumnType("datetimeoffset");
+                            b1.Property<LocalDateTime>("DateTime")
+                                .HasColumnType("timestamp without time zone");
 
                             b1.Property<decimal>("Duration")
-                                .HasPrecision(2, 1)
-                                .HasColumnType("decimal(2,1)");
+                                .HasPrecision(3, 1)
+                                .HasColumnType("numeric(3,1)");
 
                             b1.Property<int>("NoOfPersons")
-                                .HasColumnType("int");
+                                .HasColumnType("integer");
 
                             b1.Property<Guid>("TableId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.HasKey("Id");
 
                             b1.HasIndex("TableId");
 
-                            b1.ToTable("Bookings");
+                            b1.ToTable("Booking");
 
-                            b1.WithOwner("Table")
+                            b1.WithOwner()
                                 .HasForeignKey("TableId");
 
                             b1.OwnsOne("Booking.DataAccess.Models.Contact", "Contact", b2 =>
                                 {
                                     b2.Property<Guid>("BookingId")
-                                        .HasColumnType("uniqueidentifier");
+                                        .HasColumnType("uuid");
 
                                     b2.Property<string>("Email")
                                         .IsRequired()
                                         .HasMaxLength(255)
-                                        .HasColumnType("nvarchar(255)");
+                                        .HasColumnType("character varying(255)");
 
                                     b2.Property<string>("Name")
                                         .IsRequired()
                                         .HasMaxLength(255)
-                                        .HasColumnType("nvarchar(255)");
+                                        .HasColumnType("character varying(255)");
 
                                     b2.Property<string>("PhoneNumber")
                                         .IsRequired()
                                         .HasMaxLength(255)
-                                        .HasColumnType("nvarchar(255)");
+                                        .HasColumnType("character varying(255)");
 
                                     b2.HasKey("BookingId");
 
-                                    b2.ToTable("Bookings");
+                                    b2.ToTable("Booking");
 
                                     b2.WithOwner()
                                         .HasForeignKey("BookingId");
@@ -104,8 +105,6 @@ namespace Booking.DataAccess.Migrations
 
                             b1.Navigation("Contact")
                                 .IsRequired();
-
-                            b1.Navigation("Table");
                         });
 
                     b.Navigation("Bookings");
