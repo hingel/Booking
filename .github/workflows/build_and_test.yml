@@ -25,14 +25,12 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-        # cache: true
 
     - name: Install dependencies
       run: dotnet restore
       
     - name: Build 
-      # run: dotnet build --configuration Release --no-restore
-      run: dotnet build --configuration Release
+      run: dotnet build --configuration Release --no-restore
     
     - name: Test
       run: dotnet test --no-restore --verbosity normal
