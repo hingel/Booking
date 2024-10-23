@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Booking.Host/Properties/serviceDependencies.json
+/Booking.Host/Properties/serviceDependencies.local.json
