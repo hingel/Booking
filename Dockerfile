@@ -14,7 +14,10 @@ WORKDIR /src
 COPY ["Booking.Host/Booking.Host.csproj", "Booking.Host/"]
 COPY ["Booking.Business/Booking.Business.csproj", "Booking.Business/"]
 COPY ["Booking.DataAccess/Booking.DataAccess.csproj", "Booking.DataAccess/"]
+
 RUN dotnet restore "./Booking.Host/Booking.Host.csproj" -r linux-arm64
+# RUN dotnet restore "./Booking.Host/Booking.Host.csproj" 
+
 COPY . .
 WORKDIR "/src/Booking.Host"
 RUN dotnet build "./Booking.Host.csproj" -c $BUILD_CONFIGURATION -o /app/build
