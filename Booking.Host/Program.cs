@@ -1,5 +1,4 @@
 using Booking.Business.Commands.Handlers;
-using Booking.Business.Repository;
 using Booking.DataAccess;
 using Booking.DataAccess.Models;
 using Booking.Host.Contracts;
@@ -21,14 +20,14 @@ var stringBuilder = new NpgsqlConnectionStringBuilder() //connectionString)
 	Host = host,
 	Database = database,
 	Username = username,
-	Password =  password //builder.Configuration["PostgreSQL:Password"]
+	Password = password
+	//Password = builder.Configuration["PostgreSQL:Password"]
 };
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(
 	stringBuilder.ConnectionString, 
 	o => o.UseNodaTime()));
-builder.Services.AddScoped<IRepository, TableRepository>();
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(TableRepository).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateBookingHandler).Assembly));
 
 var app = builder.Build();
 

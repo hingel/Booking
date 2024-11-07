@@ -1,15 +1,15 @@
 ﻿using AutoFixture;
-using Booking.Business.Query;
+using Booking.Business.Query.Handlers;
 using Booking.DataAccess.Models;
 using FluentAssertions;
 
-namespace UnitTests;
+namespace UnitTests.Business;
 
 public class GetTablesHandlerTests : UnitTests
 {
-	private readonly GetTablesHandler subject;
+    private readonly GetTablesHandler subject;
 
-	public GetTablesHandlerTests()
+    public GetTablesHandlerTests()
     {
         subject = new GetTablesHandler(DbContext);
     }
@@ -26,7 +26,7 @@ public class GetTablesHandlerTests : UnitTests
         {
             Success = true,
             Message = "Tables for company: ",
-		});
+        });
 
         result.Data.Should().Contain(tables);
     }

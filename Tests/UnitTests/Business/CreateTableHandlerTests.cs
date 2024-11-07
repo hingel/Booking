@@ -2,13 +2,13 @@
 using Booking.Business.Commands.Handlers;
 using FluentAssertions;
 
-namespace UnitTests;
+namespace UnitTests.Business;
 public class CreateTableHandlerTests : UnitTests
 {
-	private readonly CreateTableHandler subject;
+    private readonly CreateTableHandler subject;
     public CreateTableHandlerTests()
     {
-		subject = new CreateTableHandler(DbContext);
+        subject = new CreateTableHandler(DbContext);
     }
 
     [Fact]
@@ -23,22 +23,24 @@ public class CreateTableHandlerTests : UnitTests
         await DbContext.SaveChangesAsync();
 
         var response = await subject.Handle(request, CancellationToken.None);
-        response.Should().BeEquivalentTo(new { 
-        Success = false,
-        Message = "Table already exists",
-        Data = Guid.Empty});
+        response.Should().BeEquivalentTo(new
+        {
+            Success = false,
+            Message = "Table already exists",
+            Data = Guid.Empty
+        });
     }
 
     [Fact]
     public async Task Handle_ValidRequest_TableSaved()
     {
-		var request = Fixture.Create<CreateTable>();
+        var request = Fixture.Create<CreateTable>();
 
         var response = await subject.Handle(request, CancellationToken.None);
-		response.Should().BeEquivalentTo(new
-		{
-			Success = true,
-			Message = $"Table with name {request.Name} added"
-		});
-	}
+        response.Should().BeEquivalentTo(new
+        {
+            Success = true,
+            Message = $"Table with name {request.Name} added"
+        });
+    }
 }
