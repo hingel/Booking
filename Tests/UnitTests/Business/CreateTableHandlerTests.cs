@@ -1,18 +1,14 @@
 ﻿using AutoFixture;
 using Booking.Business.Commands.Handlers;
-using Booking.Business.Repository;
 using FluentAssertions;
-using NSubstitute;
 
-namespace UnitTests;
+namespace UnitTests.Business;
 public class CreateTableHandlerTests : UnitTests
 {
-    private readonly IRepository repository;
     private readonly CreateTableHandler subject;
     public CreateTableHandlerTests()
     {
-		repository = Substitute.For<IRepository>();
-		subject = new CreateTableHandler(repository);
+        subject = new CreateTableHandler(DbContext);
     }
 
     [Fact]
@@ -23,25 +19,28 @@ public class CreateTableHandlerTests : UnitTests
             .With(t => t.CompanyId, request.CompanyId)
             .With(t => t.Name, request.Name).Create();
 
-        repository.GetAllTables(request.CompanyId).Returns([table]);
+        DbContext.Tables.Add(table);
+        await DbContext.SaveChangesAsync();
 
         var response = await subject.Handle(request, CancellationToken.None);
-        response.Should().BeEquivalentTo(new { 
-        Success = false,
-        Message = "Table already exists",
-        Response = Guid.Empty});
+        response.Should().BeEquivalentTo(new
+        {
+            Success = false,
+            Message = "Table already exists",
+            Data = Guid.Empty
+        });
     }
 
     [Fact]
     public async Task Handle_ValidRequest_TableSaved()
     {
-		var request = Fixture.Create<CreateTable>();
+        var request = Fixture.Create<CreateTable>();
 
-		var response = await subject.Handle(request, CancellationToken.None);
-		response.Should().BeEquivalentTo(new
-		{
-			Success = true,
-			Message = $"Table with name {request.Name} added"
-		});
-	}
+        var response = await subject.Handle(request, CancellationToken.None);
+        response.Should().BeEquivalentTo(new
+        {
+            Success = true,
+            Message = $"Table with name {request.Name} added"
+        });
+    }
 }
