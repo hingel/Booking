@@ -1,15 +1,18 @@
 ﻿using Booking.DataAccess;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Booking.Business.Commands.Handlers;
 
 public record CreateTable(string Name, Guid CompanyId) : IRequest<Result<Guid>>;
 
-public class CreateTableHandler(ApplicationDbContext context) : IRequestHandler<CreateTable, Result<Guid>>
+public class CreateTableHandler(ApplicationDbContext context, ILogger<CreateTableHandler> logger) : IRequestHandler<CreateTable, Result<Guid>>
 {
 	public async Task<Result<Guid>> Handle(CreateTable request, CancellationToken cancellationToken)
 	{
+		logger.LogInformation("Booking.Handlers.CreateTable {name}", request.Name);
+
 		if ((await context.Tables.Where(t => t.CompanyId == request.CompanyId).AnyAsync(t => t.Name == request.Name)))
 		{
 			return new Result<Guid>(false, "Table already exists", Guid.Empty);
