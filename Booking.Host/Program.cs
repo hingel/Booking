@@ -66,4 +66,7 @@ app.MapPost("tables", async (IMediator mediator, CreateTableRequest table) =>
 	return result.Success ? Results.Ok(result) : Results.Conflict(result);
 });
 
+app.MapGet("tables", async (ApplicationDbContext context) => 
+Results.Ok(await context.Tables.ToListAsync()));
+
 app.Run();
