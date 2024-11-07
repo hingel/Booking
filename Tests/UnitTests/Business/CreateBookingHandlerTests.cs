@@ -4,6 +4,7 @@ using Booking.DataAccess.Models;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 
+
 namespace UnitTests.Business
 {
     public class CreateBookingHandlerTests : UnitTests

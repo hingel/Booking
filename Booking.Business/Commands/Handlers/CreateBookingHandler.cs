@@ -14,7 +14,7 @@ public class CreateBookingHandler(ApplicationDbContext dbContext, ILogger<Create
 	public async Task<Result<string>> Handle(CreateBooking request, CancellationToken cancellationToken)
 	{
 		logging.LogInformation("Booking.Handlers.CreateBooking {booking}", request.Id);
-
+    
 		var availableTables = await dbContext.Tables.Where(t => t.CompanyId == request.CompanyId && !t.Bookings.Any(b =>
 		request.DateTime.Year == b.DateTime.Year &&
 		request.DateTime.DayOfYear == b.DateTime.DayOfYear &&
