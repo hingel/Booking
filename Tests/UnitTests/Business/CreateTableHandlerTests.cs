@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using Booking.Business.Commands.Handlers;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 
 namespace UnitTests.Business;
 public class CreateTableHandlerTests : UnitTests
@@ -8,7 +9,8 @@ public class CreateTableHandlerTests : UnitTests
     private readonly CreateTableHandler subject;
     public CreateTableHandlerTests()
     {
-        subject = new CreateTableHandler(DbContext);
+		var logger = NSubstitute.Substitute.For<ILogger<CreateTableHandler>>();
+		subject = new CreateTableHandler(DbContext, logger);
     }
 
     [Fact]

@@ -2,16 +2,19 @@
 using Booking.DataAccess.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NodaTime;
 
 namespace Booking.Business.Commands.Handlers;
 
 public record CreateBooking(Guid Id, LocalDateTime DateTime, int Duration, int Persons, Contact Contact, Guid CompanyId) : IRequest<Result<string>>;
 
-public class CreateBookingHandler(ApplicationDbContext dbContext) : IRequestHandler<CreateBooking, Result<string>>
+public class CreateBookingHandler(ApplicationDbContext dbContext, ILogger<CreateBookingHandler> logging) : IRequestHandler<CreateBooking, Result<string>>
 {
 	public async Task<Result<string>> Handle(CreateBooking request, CancellationToken cancellationToken)
 	{
+		logging.LogInformation("Booking.Handlers.CreateBooking {booking}", request.Id);
+    
 		var availableTables = await dbContext.Tables.Where(t => t.CompanyId == request.CompanyId && !t.Bookings.Any(b =>
 		request.DateTime.Year == b.DateTime.Year &&
 		request.DateTime.DayOfYear == b.DateTime.DayOfYear &&

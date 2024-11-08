@@ -2,6 +2,8 @@ using AutoFixture;
 using Booking.Business.Commands.Handlers;
 using Booking.DataAccess.Models;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+
 
 namespace UnitTests.Business
 {
@@ -11,7 +13,8 @@ namespace UnitTests.Business
 
         public CreateBookingHandlerTests()
         {
-            subject = new CreateBookingHandler(DbContext);
+            var logger = NSubstitute.Substitute.For<ILogger<CreateBookingHandler>>();
+            subject = new CreateBookingHandler(DbContext, logger);
         }
 
         [Fact]
