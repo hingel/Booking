@@ -31,7 +31,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Cre
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction()) //Detta görs på något annat sätt:
 {
 	using var scope = app.Services.CreateScope();
 	var logger = scope.ServiceProvider.GetRequiredService<ILogger<ApplicationDbContext>>();
