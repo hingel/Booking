@@ -34,11 +34,19 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
 	using var scope = app.Services.CreateScope();
+	var logger = scope.ServiceProvider.GetRequiredService<ILogger<ApplicationDbContext>>();
+	logger.LogInformation("In Development");
 	var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 	context.Database.Migrate();
 }
+else
+{
+	using var scope = app.Services.CreateScope();
+	var logger = scope.ServiceProvider.GetRequiredService<ILogger<ApplicationDbContext>>();
+	logger.LogInformation("Is not in Development");
+}
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => $"Hello World, försök att gå tag på environment variabel: Postgresdb är: {Environment.GetEnvironmentVariable("POSTGRES_DB")}");
 
 app.MapPost("/", async (IMediator mediator, CreateBookingRequest booking) =>
 {
