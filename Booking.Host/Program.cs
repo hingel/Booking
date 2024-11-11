@@ -38,7 +38,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction()) //Detta g
 	context.Database.Migrate();
 }
 
-
 app.MapGet("/", () => $"Hello World, försök att gå tag på environment variabel: Postgresdb är: {Environment.GetEnvironmentVariable("POSTGRES_DB")}");
 
 app.MapPost("/", async (IMediator mediator, CreateBookingRequest booking) =>
