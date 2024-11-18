@@ -36,6 +36,8 @@ public class BookingTests(IntegrationTestFactory<Program> factory) : Integration
 
 		using var scope = Factory.Services.CreateScope();
 		var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+		dbContext.Database.EnsureDeleted();
+		dbContext.Database.EnsureCreated();
 		dbContext.Tables.AddRange(tables);
 		await dbContext.SaveChangesAsync();
 
@@ -56,6 +58,8 @@ public class BookingTests(IntegrationTestFactory<Program> factory) : Integration
 
 		using var scope = Factory.Services.CreateScope();
 		var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+		dbContext.Database.EnsureDeleted();
+		dbContext.Database.EnsureCreated();
 		dbContext.Tables.Add(table);
 		await dbContext.SaveChangesAsync();
 
