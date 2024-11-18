@@ -8,6 +8,10 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
 	<ItemGroup>
 	<PackageReference Include="MediatR" Version="12.4.1" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
