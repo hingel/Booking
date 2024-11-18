@@ -1,4 +1,5 @@
 using Booking.Business.Commands.Handlers;
+using Booking.Business.Query.Handlers;
 using Booking.DataAccess;
 using Booking.DataAccess.Models;
 using Booking.Host.Contracts;
@@ -39,12 +40,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction()) //Detta g
 	var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 	context.Database.Migrate();
 }
-else
-{
-	using var scope = app.Services.CreateScope();
-	var logger = scope.ServiceProvider.GetRequiredService<ILogger<ApplicationDbContext>>();
-	logger.LogInformation("Is not in Development");
-}
 
 app.MapGet("/", () => $"Hello World, försök att gå tag på environment variabel: Postgresdb är: {Environment.GetEnvironmentVariable("POSTGRES_DB")}");
 
@@ -73,7 +68,9 @@ app.MapPost("tables", async (IMediator mediator, CreateTableRequest table) =>
 	return result.Success ? Results.Ok(result) : Results.Conflict(result);
 });
 
-app.MapGet("tables", async (ApplicationDbContext context) => 
-Results.Ok(await context.Tables.ToListAsync()));
+app.MapGet("tables", async (IMediator mediator) =>
+	Results.Ok(await mediator.Send(new GetTablesQuery())));
 
 app.Run();
+
+public partial class Program { }
