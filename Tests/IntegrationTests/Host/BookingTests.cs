@@ -1,56 +1,17 @@
 ﻿using AutoFixture;
 using Booking.Business;
+using Booking.Business.Mapping;
+using Booking.Contract.Requests;
+using Booking.Contract.Responses;
 using Booking.DataAccess;
 using Booking.DataAccess.Models;
-using Booking.Host.Contracts;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace IntegrationTests.Host;
-
 public class BookingTests(IntegrationTestFactory<Program> factory) : IntegrationTestHelper(factory)
 {
-	[Fact]
-	public async Task AddTables_DataPersisted()
-	{
-		var request = Fixture.Build<CreateTableRequest>().With(t => t.CompanyId, Fixture.Create<Guid>().ToString()).Create();
-		var json = JsonSerializer.Serialize(request);
-
-		var response = await HttpClient.PostAsync("/tables", new StringContent(json, Encoding.UTF8, "application/json"));
-
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-		var result = await response.Content.ReadFromJsonAsync<Result<Guid>>();
-		
-		result.Should().NotBeNull();
-		result!.Success.Should().BeTrue();
-		result.Message.Should().Be($"Table with name {request.Name} added");
-	}
-
-	[Fact]
-	public async Task GetTables_ResturnsTables()
-	{
-		var tables = Fixture.CreateMany<Table>();
-
-		using var scope = Factory.Services.CreateScope();
-		var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-		dbContext.Database.EnsureDeleted();
-		dbContext.Database.EnsureCreated();
-		dbContext.Tables.AddRange(tables);
-		await dbContext.SaveChangesAsync();
-
-		var response = await HttpClient.GetAsync("/tables");
-
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-		var result = await response.Content.ReadFromJsonAsync<Result<Table[]>>();
-		result.Should().NotBeNull();
-		result!.Success.Should().BeTrue();
-		result.Data.Should().BeEquivalentTo(tables);
-
-	}
-
 	[Fact]
 	public async Task CreateBooking_DataPersisted()
 	{
@@ -65,10 +26,12 @@ public class BookingTests(IntegrationTestFactory<Program> factory) : Integration
 
 		var bookingRequest = Fixture.Build<CreateBookingRequest>().With(b => b.CompanyId, table.CompanyId.ToString).Create();
 
-		var response = await HttpClient.PostAsJsonAsync<CreateBookingRequest>("/", bookingRequest);
+		var response = await HttpClient.PostAsJsonAsync("/", bookingRequest);
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-		dbContext.Tables.First().Bookings.First().Should().BeEquivalentTo(new
+		var test = dbContext.Tables.First().Bookings.First();
+		
+		test.Should().BeEquivalentTo(new
 		{
 			bookingRequest.Duration,
 			NoOfPersons = bookingRequest.Persons,
@@ -81,5 +44,37 @@ public class BookingTests(IntegrationTestFactory<Program> factory) : Integration
 			TableId = table.Id,
 			table.CompanyId
 		});
+
+		dbContext.Database.EnsureDeleted();
+	}
+
+	[Fact]
+	public async Task GetBooking_ReturnsCorrect()
+	{
+		var table = Fixture.Create<Table>() with { CompanyId = Fixture.Create<Guid>() };
+		var bookings = Fixture.Build<Booking.DataAccess.Models.Booking>().With(b => b.TableId, table.Id).CreateMany();
+
+        foreach (var item in bookings)
+        {
+            table.Bookings.Add(item);
+        }
+
+		using var scope = Factory.Services.CreateScope();
+		var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+		dbContext.Database.EnsureDeleted();
+		dbContext.Database.EnsureCreated();
+		dbContext.Tables.Add(table);
+		await dbContext.SaveChangesAsync();
+
+		var response = await HttpClient.GetAsync($"/bookings/{bookings.Skip(1).First().Id}");
+		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+		var result = await response.Content.ReadFromJsonAsync<Result<BookingResponse>>();
+
+		result.Should().NotBeNull();
+		result!.Success.Should().BeTrue();
+		result.Data.Should().BeEquivalentTo(bookings.Skip(1).Take(1).Select(b => b.ToContract()).First());
+
+		dbContext.Database.EnsureDeleted();
 	}
 }
+

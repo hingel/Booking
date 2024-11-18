@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Booking.DataAccess.Models;
+﻿using Booking.DataAccess.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Booking.DataAccess;
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)

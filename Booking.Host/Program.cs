@@ -1,9 +1,6 @@
 using Booking.Business.Commands.Handlers;
-using Booking.Business.Query.Handlers;
 using Booking.DataAccess;
-using Booking.DataAccess.Models;
-using Booking.Host.Contracts;
-using MediatR;
+using Booking.Host.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
@@ -43,33 +40,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction()) //Detta g
 
 app.MapGet("/", () => $"Hello World, försök att gå tag på environment variabel: Postgresdb är: {Environment.GetEnvironmentVariable("POSTGRES_DB")}");
 
-app.MapPost("/", async (IMediator mediator, CreateBookingRequest booking) =>
-{
-	var result = await mediator.Send(new CreateBooking(Guid.NewGuid(),
-		new NodaTime.LocalDateTime(booking.DateTime.Year,
-			booking.DateTime.Month,
-			booking.DateTime.Day,
-			booking.DateTime.Hour,
-			booking.DateTime.Minute,
-			booking.DateTime.Second),
-		booking.Duration,
-		booking.Persons,
-		new Contact(booking.Contact.Name,
-		booking.Contact.PhoneNumber,
-		booking.Contact.Email),
-		Guid.Parse(booking.CompanyId)));
-
-	return result.Success ? Results.Ok(result) : Results.Conflict(result);
-});
-
-app.MapPost("tables", async (IMediator mediator, CreateTableRequest table) =>
-{
-	var result = await mediator.Send(new CreateTable(table.Name, Guid.Parse(table.CompanyId)));
-	return result.Success ? Results.Ok(result) : Results.Conflict(result);
-});
-
-app.MapGet("tables", async (IMediator mediator) =>
-	Results.Ok(await mediator.Send(new GetTablesQuery())));
+app.MapTableEndpoints();
+app.MapBookingEndpoints();
 
 app.Run();
 

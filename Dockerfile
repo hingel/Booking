@@ -14,6 +14,7 @@ WORKDIR /src
 COPY ["Booking.Host/Booking.Host.csproj", "Booking.Host/"]
 COPY ["Booking.Business/Booking.Business.csproj", "Booking.Business/"]
 COPY ["Booking.DataAccess/Booking.DataAccess.csproj", "Booking.DataAccess/"]
+COPY ["Booking.DataAccess/Booking.Contract.csproj", "Booking.Contract/"]
 # RUN dotnet restore "./Booking.Host/Booking.Host.csproj" 
 RUN dotnet restore "Booking.Host/Booking.Host.csproj"
 

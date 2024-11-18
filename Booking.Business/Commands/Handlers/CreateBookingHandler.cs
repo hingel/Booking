@@ -14,14 +14,14 @@ public class CreateBookingHandler(ApplicationDbContext dbContext, ILogger<Create
 	public async Task<Result<string>> Handle(CreateBooking request, CancellationToken cancellationToken)
 	{
 		logging.LogInformation("Booking.Handlers.CreateBooking {booking}", request.Id);
-    
+
 		var availableTables = await dbContext.Tables.Where(t => t.CompanyId == request.CompanyId && !t.Bookings.Any(b =>
 		request.DateTime.Year == b.DateTime.Year &&
 		request.DateTime.DayOfYear == b.DateTime.DayOfYear &&
 		request.DateTime.Hour + request.Duration > b.DateTime.Hour &&
-		request.DateTime.Hour < b.DateTime.Hour + b.Duration)).ToArrayAsync();
+		request.DateTime.Hour < b.DateTime.Hour + b.Duration)).ToArrayAsync(cancellationToken);
 
-		if (!availableTables.Any()) return new Result<string>(false, "Booking not added", null);
+		if (availableTables.Length == 0) return new Result<string>(false, "Booking not added", null);
 
 		var bookingToAdd = new DataAccess.Models.Booking(
 			request.DateTime,
@@ -35,8 +35,7 @@ public class CreateBookingHandler(ApplicationDbContext dbContext, ILogger<Create
 
 		availableTables.First().Bookings.Add(bookingToAdd);
 
-		await dbContext.SaveChangesAsync();
+		await dbContext.SaveChangesAsync(cancellationToken);
 		return new Result<string>(true, "Booking added", bookingToAdd.Id.ToString());
 	}
 }
-
