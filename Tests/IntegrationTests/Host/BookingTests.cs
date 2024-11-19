@@ -19,8 +19,6 @@ public class BookingTests(IntegrationTestFactory<Program> factory) : Integration
 
 		using var scope = Factory.Services.CreateScope();
 		var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-		dbContext.Database.EnsureDeleted();
-		dbContext.Database.EnsureCreated();
 		dbContext.Tables.Add(table);
 		await dbContext.SaveChangesAsync();
 
@@ -44,8 +42,6 @@ public class BookingTests(IntegrationTestFactory<Program> factory) : Integration
 			TableId = table.Id,
 			table.CompanyId
 		});
-
-		dbContext.Database.EnsureDeleted();
 	}
 
 	[Fact]
@@ -61,8 +57,6 @@ public class BookingTests(IntegrationTestFactory<Program> factory) : Integration
 
 		using var scope = Factory.Services.CreateScope();
 		var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-		dbContext.Database.EnsureDeleted();
-		dbContext.Database.EnsureCreated();
 		dbContext.Tables.Add(table);
 		await dbContext.SaveChangesAsync();
 
@@ -73,8 +67,6 @@ public class BookingTests(IntegrationTestFactory<Program> factory) : Integration
 		result.Should().NotBeNull();
 		result!.Success.Should().BeTrue();
 		result.Data.Should().BeEquivalentTo(bookings.Skip(1).Take(1).Select(b => b.ToContract()).First());
-
-		dbContext.Database.EnsureDeleted();
 	}
 }
 

@@ -31,7 +31,6 @@ public class TablesTests(IntegrationTestFactory<Program> factory) : IntegrationT
 
 		using var scope = Factory.Services.CreateScope();
 		var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-		dbContext.Database.EnsureDeleted();
 	}
 
 	[Fact]
@@ -41,8 +40,6 @@ public class TablesTests(IntegrationTestFactory<Program> factory) : IntegrationT
 
 		using var scope = Factory.Services.CreateScope();
 		var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-		dbContext.Database.EnsureDeleted();
-		dbContext.Database.EnsureCreated();
 		dbContext.Tables.AddRange(tables);
 		await dbContext.SaveChangesAsync();
 
@@ -52,8 +49,6 @@ public class TablesTests(IntegrationTestFactory<Program> factory) : IntegrationT
 		var result = await response.Content.ReadFromJsonAsync<Result<TableResponse[]>>();
 		result.Should().NotBeNull();
 		result!.Success.Should().BeTrue();
-		result.Data.Should().BeEquivalentTo(tables.Select(t => t.ToContract()));
-
-		dbContext.Database.EnsureDeleted();
+		result.Data!.Where(t => tables.Select(p => p.Id).Contains(t.Id)).Should().BeEquivalentTo(tables.Select(t => t.ToContract()));
 	}
 }
