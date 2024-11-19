@@ -13,7 +13,7 @@ public class CreateTableHandler(ApplicationDbContext context, ILogger<CreateTabl
 	{
 		logger.LogInformation("Booking.Handlers.CreateTable {name}", request.Name);
 
-		if ((await context.Tables.Where(t => t.CompanyId == request.CompanyId).AnyAsync(t => t.Name == request.Name)))
+		if (await context.Tables.Where(t => t.CompanyId == request.CompanyId).AnyAsync(t => t.Name == request.Name, cancellationToken))
 		{
 			return new Result<Guid>(false, "Table already exists", Guid.Empty);
 		}

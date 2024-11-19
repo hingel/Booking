@@ -29,6 +29,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Booking.Business\Booking.Business.csproj" />
+	  <ProjectReference Include="..\Booking.Contract\Booking.Contract.csproj" />
 	  <ProjectReference Include="..\Booking.DataAccess\Booking.DataAccess.csproj" />
 	</ItemGroup>
 

@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using Booking.Business.Mapping;
 using Booking.Business.Query.Handlers;
 using Booking.DataAccess.Models;
 using FluentAssertions;
@@ -28,6 +29,6 @@ public class GetTablesHandlerTests : UnitTests
             Message = "Tables for company: ",
         });
 
-        result.Data.Should().Contain(tables);
+        result.Data.Should().Contain(tables.Select(t => t.ToContract()));
     }
 }

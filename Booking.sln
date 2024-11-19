@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Booking.Host", "Booking.Hos
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Booking.DataAccess", "Booking.DataAccess\Booking.DataAccess.csproj", "{33FE50B1-4468-4927-BE9A-56B6D70989D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "Tests\IntegrationTests\IntegrationTests.csproj", "{26CB611A-1CA1-4B83-BAA5-45147E4B4BCE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationTests", "Tests\IntegrationTests\IntegrationTests.csproj", "{26CB611A-1CA1-4B83-BAA5-45147E4B4BCE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Contract", "Booking.Contract\Booking.Contract.csproj", "{8F06AA66-91F2-440B-A49A-B078FDD14C6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{26CB611A-1CA1-4B83-BAA5-45147E4B4BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26CB611A-1CA1-4B83-BAA5-45147E4B4BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26CB611A-1CA1-4B83-BAA5-45147E4B4BCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F06AA66-91F2-440B-A49A-B078FDD14C6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F06AA66-91F2-440B-A49A-B078FDD14C6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F06AA66-91F2-440B-A49A-B078FDD14C6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F06AA66-91F2-440B-A49A-B078FDD14C6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

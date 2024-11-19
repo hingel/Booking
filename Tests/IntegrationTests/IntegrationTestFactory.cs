@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IntegrationTests;
@@ -19,7 +20,8 @@ public class IntegrationTestFactory<TProgram> : WebApplicationFactory<TProgram> 
 			services.Remove(dbContextDescriptor);
 			services.AddDbContext<ApplicationDbContext>((container, options) =>
 			{
-				options.UseInMemoryDatabase("DbName");
+				options.UseInMemoryDatabase("DbName")
+				.ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning));
 			});
 		});
 
