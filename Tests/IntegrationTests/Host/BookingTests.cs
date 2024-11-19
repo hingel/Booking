@@ -45,7 +45,7 @@ public class BookingTests(IntegrationTestFactory<Program> factory) : Integration
 	}
 
 	[Fact]
-	public async Task GetBooking_ReturnsCorrect()
+	public async Task GetBookingById_ReturnsCorrect()
 	{
 		var table = Fixture.Create<Table>() with { CompanyId = Fixture.Create<Guid>() };
 		var bookings = Fixture.Build<Booking.DataAccess.Models.Booking>().With(b => b.TableId, table.Id).CreateMany();
