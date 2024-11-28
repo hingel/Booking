@@ -27,7 +27,7 @@ jobs:
               id: meta
               uses: docker/metadata-action@v5
               with:
-                images: hingel/bookingrepo
+                images: hingel/bookingservice
             
             - name: Build and push Docker image
               id: push
