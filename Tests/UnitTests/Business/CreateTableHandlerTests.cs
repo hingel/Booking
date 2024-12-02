@@ -1,16 +1,20 @@
 ﻿using AutoFixture;
 using Booking.Business.Commands.Handlers;
+using Booking.DataAccess.Providers;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using NSubstitute;
 
 namespace UnitTests.Business;
 public class CreateTableHandlerTests : UnitTests
 {
-    private readonly CreateTableHandler subject;
+	private readonly IAdminProvider adminProvider;
+	private readonly CreateTableHandler subject;
     public CreateTableHandlerTests()
     {
-		var logger = NSubstitute.Substitute.For<ILogger<CreateTableHandler>>();
-		subject = new CreateTableHandler(DbContext, logger);
+		var logger = Substitute.For<ILogger<CreateTableHandler>>();
+        adminProvider = Substitute.For<IAdminProvider>();
+		subject = new CreateTableHandler(DbContext, adminProvider, logger);
     }
 
     [Fact]
@@ -24,6 +28,8 @@ public class CreateTableHandlerTests : UnitTests
         DbContext.Tables.Add(table);
         await DbContext.SaveChangesAsync();
 
+        adminProvider.VerifyCompany(request.CompanyId).Returns(true);
+
         var response = await subject.Handle(request, CancellationToken.None);
         response.Should().BeEquivalentTo(new
         {
@@ -33,10 +39,28 @@ public class CreateTableHandlerTests : UnitTests
         });
     }
 
-    [Fact]
+	[Fact]
+	public async Task Handle_CompanyDoesNotExists_ReturnsFalse()
+	{
+		var request = Fixture.Create<CreateTable>();
+
+		adminProvider.VerifyCompany(request.CompanyId).Returns(false);
+
+		var response = await subject.Handle(request, CancellationToken.None);
+		response.Should().BeEquivalentTo(new
+		{
+			Success = false,
+			Message = "Company does not exist",
+			Data = Guid.Empty
+		});
+	}
+
+	[Fact]
     public async Task Handle_ValidRequest_TableSaved()
     {
         var request = Fixture.Create<CreateTable>();
+
+        adminProvider.VerifyCompany(request.CompanyId).Returns(true);
 
         var response = await subject.Handle(request, CancellationToken.None);
         response.Should().BeEquivalentTo(new

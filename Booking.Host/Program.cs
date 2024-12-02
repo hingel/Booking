@@ -1,7 +1,9 @@
 using Booking.Business.Commands.Handlers;
 using Booking.DataAccess;
+using Booking.DataAccess.Providers;
 using Booking.Host.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +28,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql
 	stringBuilder.ConnectionString, 
 	o => o.UseNodaTime()));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateBookingHandler).Assembly));
+
+builder.Services.AddHttpClient<IAdminProvider, AdminProvider>(client =>
+{
+	client.BaseAddress = new Uri(builder.Configuration.GetSection("Services").GetValue<string>("Admin") ?? throw new Exception("Base address not found"));
+
+	//Får fixa detta sen.
+	//client.DefaultRequestHeaders.Add()
+});
 
 var app = builder.Build();
 
