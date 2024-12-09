@@ -27,8 +27,7 @@ public class CreateBookingHandler(ApplicationDbContext dbContext, ILogger<Create
 			request.DateTime,
 			request.Duration,
 			request.Persons,
-			request.CompanyId
-			)
+			request.CompanyId)
 		{
 			Contact = request.Contact
 		};

@@ -22,6 +22,7 @@ public class UnitTests : IDisposable
 		MessageHandler = new MockHttpMessageHandler();
 		Client =  MessageHandler.ToHttpClient();
 		Client.BaseAddress = new Uri("http://bookingadmin");
+		//Client.DefaultRequestHeaders.Add("Authorization", "token");
 	}
 
 	public void Dispose()

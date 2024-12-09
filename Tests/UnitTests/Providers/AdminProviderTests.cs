@@ -17,16 +17,12 @@ public class AdminProviderTests : UnitTests
     [Fact]
     public async Task VerifyCompany_ValidCompanyResponse_ReturnsTrue()
     {
-        var companyResponse = new
-        {
-            Id = Fixture.Create<Guid>(),
-            Name = Fixture.Create<string>(),
-            Address = Fixture.Create<string>()
-        };
+		var companyId = Guid.NewGuid();
+        var companyResponse = new { Success = true };
 
-		MessageHandler.When($"http://bookingadmin/companies/{companyResponse.Id}").RespondWithJson(companyResponse);
+		MessageHandler.When($"http://bookingadmin/companies/{companyId.ToString()}").RespondWithJson(companyResponse);
 
-        var result = await subject.VerifyCompany(companyResponse.Id);
+        var result = await subject.VerifyCompany(companyId);
 
         result.Should().BeTrue();
     }
@@ -35,12 +31,7 @@ public class AdminProviderTests : UnitTests
 	public async Task VerifyCompany_InValidCompanyResponse_ReturnsFalse()
 	{
 		var requestId = Fixture.Create<Guid>();
-		var companyResponse = new
-		{
-			Id = Fixture.Create<Guid>(),
-			Name = Fixture.Create<string>(),
-			Address = Fixture.Create<string>()
-		};
+		var companyResponse = new { Success = false };
 
 		MessageHandler.When($"http://bookingadmin/companies/{requestId}").RespondWithJson(companyResponse);
 

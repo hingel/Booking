@@ -22,13 +22,13 @@ public class GetTablesHandlerTests : UnitTests
         DbContext.Tables.AddRange(tables);
         await DbContext.SaveChangesAsync();
 
-        var result = await subject.Handle(Fixture.Create<GetTablesQuery>(), CancellationToken.None);
+        var result = await subject.Handle(Fixture.Build<GetTablesQuery>().With(t => t.CompanyId, tables.ElementAt(0).CompanyId).Create(), CancellationToken.None);
         result.Should().BeEquivalentTo(new
         {
             Success = true,
             Message = "Tables for company: ",
         });
 
-        result.Data.Should().Contain(tables.Select(t => t.ToContract()));
+        result.Data.Should().Contain(tables.ElementAt(0).ToContract());
     }
 }

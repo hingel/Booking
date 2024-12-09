@@ -9,10 +9,10 @@ public class AdminProvider(HttpClient httpClient) : IAdminProvider
 		var response = await httpClient.GetAsync($"/companies/{id}");
 		response.EnsureSuccessStatusCode();
 
-		var companyResponse = await response.Content.ReadFromJsonAsync<CompanyResponse>();
+		var companyResponse = await response.Content.ReadFromJsonAsync<ResultResponse>();
 
-		return companyResponse != null && companyResponse.Id != Guid.Empty && companyResponse.Id == id; 
+		return companyResponse != null && companyResponse.Success;
 	}
 
-	private record CompanyResponse(Guid Id, string Name, string? Address);
+	private record ResultResponse(bool Success);
 }
