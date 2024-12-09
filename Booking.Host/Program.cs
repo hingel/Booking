@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,27 +20,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 		ValidIssuer = "BookingApp",
 		ValidAudience = "BookingAppAudience",
 		ValidateIssuerSigningKey = true, //TODO: Kolla om denna behövs
-		IssuerSigningKeys = [new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["ValidationToken:Value"] ??
-		throw new SecurityTokenException("Key value not found")))],
+		IssuerSigningKeys = [new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("Key") ??
+		builder.Configuration["ValidationToken:Value"] ?? //Detta är till för test egentligen
+		throw new Exception("Key not found")))]
 	};
-}); //JwtBearerDefaults.AuthenticationScheme = "Bearer" egentligen
-
+});
 
 builder.Services.AddHttpContextAccessor();
 
-var connectionString = builder.Configuration.GetConnectionString("LocalConnectionString") ?? throw new Exception("Connectionstring not found");
-//var host = Environment.GetEnvironmentVariable("DB_HOST");
-//var database = Environment.GetEnvironmentVariable("POSTGRES_DB");
-//var username = Environment.GetEnvironmentVariable("POSTGRES_USER");
-//var password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
+//var connectionString = builder.Configuration.GetConnectionString("LocalConnectionString") ?? throw new Exception("Connectionstring not found");
+var host = Environment.GetEnvironmentVariable("DB_HOST");
+var database = Environment.GetEnvironmentVariable("POSTGRES_DB");
+var username = Environment.GetEnvironmentVariable("POSTGRES_USER");
+var password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
 
-var stringBuilder = new NpgsqlConnectionStringBuilder(connectionString)
+var stringBuilder = new NpgsqlConnectionStringBuilder() //connectionString)
 {
-	//Host = host,
-	//Database = database,
-	//Username = username,
-	//Password = password
-	Password = builder.Configuration["PostgreSQL:Password"]
+	Host = host,
+	Database = database,
+	Username = username,
+	Password = password
+	//Password = builder.Configuration["PostgreSQL:Password"]
 };
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(
@@ -79,24 +78,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGet("/", () => $"Hello World, försök att gå tag på environment variabel: Postgresdb är: {Environment.GetEnvironmentVariable("POSTGRES_DB") ?? "Could not be found"}");
-
-//Denna token generering ska enbart ligga i Gatewayen egentligen:
-app.MapPost("/createToken/{userId}/{companyId}", (string userId, string companyId) =>
-{
-	var subClaim = new Claim("sub", userId);
-	var companyClaim = new Claim("tid", companyId);
-	var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["ValidationToken:Value"] ??
-		throw new SecurityTokenException("Key value not found")));
-	var tokenOptions = new JwtSecurityToken(
-		issuer: "BookingApp",
-		audience: "BookingAppAudience",
-		claims: [subClaim, companyClaim],
-		expires: DateTime.Now.AddDays(2),
-		signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
-	);
-
-	return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-});
 
 app.MapTableEndpoints();
 app.MapBookingEndpoints();
