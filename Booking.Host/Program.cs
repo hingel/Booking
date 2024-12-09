@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
-
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +19,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 		ValidIssuer = "BookingApp",
 		ValidAudience = "BookingAppAudience",
 		ValidateIssuerSigningKey = true, //TODO: Kolla om denna behövs
-		IssuerSigningKeys = [new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("Key") ??
+		IssuerSigningKeys = [new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("ServiceKey") ??
 		builder.Configuration["ValidationToken:Value"] ?? //Detta är till för test egentligen
 		throw new Exception("Key not found")))]
 	};
