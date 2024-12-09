@@ -9,7 +9,6 @@ public class IntegrationTestHelper : IClassFixture<IntegrationTestFactory<Progra
 
 	public readonly IntegrationTestFactory<Program> Factory;
 	public readonly HttpClient HttpClient;
-
 	public static Guid TenantId { get; } = Guid.NewGuid();
 
 	public IntegrationTestHelper(IntegrationTestFactory<Program> factory)

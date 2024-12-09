@@ -36,7 +36,7 @@ public class IntegrationTestFactory<TProgram> : WebApplicationFactory<TProgram> 
 			{
 				apb.RequireAuthenticatedUser();
 				apb.AuthenticationSchemes.Add(TestAuthHandler.SchemaName);
-			})); //Detta nedan behövs inte egentligen.
+			})); //Detta ovan för poicyn behövs inte egentligen.
 		});
 
 		builder.UseEnvironment("Test");
