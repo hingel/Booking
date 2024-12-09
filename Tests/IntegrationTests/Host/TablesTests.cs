@@ -44,7 +44,7 @@ public class TablesTests(IntegrationTestFactory<Program> factory) : IntegrationT
 	[Fact]
 	public async Task GetTables_ResturnsTables()
 	{
-		var tables = Fixture.CreateMany<Table>();
+		var tables = Fixture.Build<Table>().With(t => t.CompanyId, IntegrationTestHelper.TenantId).CreateMany();
 
 		using var scope = Factory.Services.CreateScope();
 		var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();

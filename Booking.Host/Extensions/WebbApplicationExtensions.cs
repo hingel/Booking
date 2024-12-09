@@ -8,15 +8,23 @@ namespace Booking.Host.Extensions;
 public static class WebbApplicationExtensions
 {
 	public static WebApplication MapTableEndpoints(this WebApplication app)
-	{ 
+	{
 		app.MapPost("tables", async (IMediator mediator, CreateTableRequest table, CancellationToken cancellation) =>
 		{
 			var result = await mediator.Send(new CreateTable(table.Name, Guid.Parse(table.CompanyId)), cancellation);
 			return result.Success ? Results.Ok(result) : Results.Conflict(result);
-		});
+		}).RequireAuthorization();
 
-		app.MapGet("tables", async (IMediator mediator, CancellationToken cancellation) =>
-			Results.Ok(await mediator.Send(new GetTablesQuery(), cancellation)));
+		app.MapGet("tables", async (IMediator mediator, IHttpContextAccessor httpContext, CancellationToken cancellation) =>
+		{
+			if (httpContext.HttpContext == null) throw new Exception("Context is null");
+
+			var user = httpContext.HttpContext.User;
+			var tid =  user.Claims.FirstOrDefault(c => c.Type == "http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("tid is null");
+
+			return Results.Ok(await mediator.Send(new GetTablesQuery(Guid.Parse(tid.Value)), cancellation));
+		}).RequireAuthorization();
+
 
 		return app;
 	}
@@ -46,7 +54,7 @@ public static class WebbApplicationExtensions
 		{
 			var result = await mediator.Send(new GetBookingById(Guid.Parse(id)), cancellation);
 			return result.Success ? Results.Ok(result) : Results.NotFound(result);
-		});
+		}).RequireAuthorization();
 
 		return app;
 	}

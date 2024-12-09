@@ -8,7 +8,8 @@ namespace Booking.Business.Commands.Handlers;
 
 public record CreateTable(string Name, Guid CompanyId) : IRequest<Result<Guid>>;
 
-public class CreateTableHandler(ApplicationDbContext context, IAdminProvider adminProvider, ILogger<CreateTableHandler> logger) : IRequestHandler<CreateTable, Result<Guid>>
+public class CreateTableHandler(ApplicationDbContext context, IAdminProvider adminProvider, ILogger<CreateTableHandler> logger) :
+	IRequestHandler<CreateTable, Result<Guid>>
 {
 	public async Task<Result<Guid>> Handle(CreateTable request, CancellationToken cancellationToken)
 	{
