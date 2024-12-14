@@ -29,7 +29,7 @@ public class BookingQueryHandlerTests : UnitTests
 		DbContext.Tables.Add(table);
 		await DbContext.SaveChangesAsync();
 
-		var request = new BookingQuery(companyId, new LocalDate(date.Year, date.Month, date.Day + 1));
+		var request = new BookingQuery(companyId, new LocalDate(date.Year, date.Month, date.Day).PlusDays(1));
 
 		var result = await subject.Handle(request, CancellationToken.None);
 
@@ -53,7 +53,7 @@ public class BookingQueryHandlerTests : UnitTests
 		DbContext.Tables.Add(table);
 		await DbContext.SaveChangesAsync();
 
-		var request = new BookingQuery(companyId, new LocalDate(date.Year, date.Month, date.Day + 10));
+		var request = new BookingQuery(companyId, new LocalDate(date.Year, date.Month, date.Day).PlusDays(10));
 
 		var result = await subject.Handle(request, CancellationToken.None);
 
