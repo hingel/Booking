@@ -24,7 +24,7 @@ public class BookingTests(IntegrationTestFactory<Program> factory) : Integration
 
 		var bookingRequest = Fixture.Build<CreateBookingRequest>().With(b => b.CompanyId, table.CompanyId.ToString).Create();
 
-		var response = await HttpClient.PostAsJsonAsync("/", bookingRequest);
+		var response = await HttpClient.PostAsJsonAsync("/bookings", bookingRequest);
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
 		var test = dbContext.Tables.First().Bookings.First();
@@ -69,4 +69,3 @@ public class BookingTests(IntegrationTestFactory<Program> factory) : Integration
 		result.Data.Should().BeEquivalentTo(bookings.Skip(1).Take(1).Select(b => b.ToContract()).First());
 	}
 }
-
