@@ -14,6 +14,7 @@ public class BookingQueryHandler(ApplicationDbContext dbContext) : IRequestHandl
 	public async Task<Result<BookingResponse[]>> Handle(BookingQuery request, CancellationToken cancellationToken)
 	{
 		var bookings = await dbContext.Tables
+			.AsNoTracking()
 			.Where(t => t.CompanyId == request.CompanyId)
 			.Select(t => t.Bookings.Where(b => b.DateTime.Date >= request.Fromdate))
 			.SelectMany(b => b)
